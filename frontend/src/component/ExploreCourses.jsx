@@ -18,7 +18,7 @@ function ExploreCourses() {
     <div className='w-[100%] lg:w-[350px] lg:h-[100%] h-[400px] flex flex-col items-start justify-center gap-1 md:px-[40px] px-[20px] mt-[20px]'>
         <span className='text-[30px] font-semibold'>Explore</span>
         <span className='text-[30px] font-semibold'>Our Courses</span>
-        <p className='text-[17px]'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam perspiciatis magnam quaerat porro eos nemo provident commodi quasi, vel quod ipsa numquam voluptatibus vero dolores culpa repellendus quia. Nihil, voluptatem.</p>
+        <p className='text-[17px]'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam perspiciatis magnam quaerat porro eos nemo provident commodi quasi, vel quod ipsa numquam vero dolores culpa repellendus quia. Nihil, voluptatem.</p>
         <button className='px-[20px] py-[10px] border-2 bg-[black] border-white text-white rounded-[10px] text-[18px] font-light flex gap-2 mt-[30px] cursor-pointer'>Explore Courses <SiViaplay className='w-[30px] h-[30px] lg:fill-white' /></button>
     </div>
     {/* right/top div */}
