@@ -11,7 +11,7 @@ export const createCourse = async(req,res) =>{
         }
         const course = await Course.create({
             title,
-            description,
+            category,
             creator: req.userId
         })
         return res.status(201).json(course);
