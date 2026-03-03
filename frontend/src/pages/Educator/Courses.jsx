@@ -1,15 +1,32 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { useNavigate } from 'react-router-dom';
 import img from "../../assets/empty.jpg";
 import { FaEdit } from "react-icons/fa";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+import { serverUrl } from '../../App';
+import { setCreatorCourseData } from '../../redux/courseSlice';
 
 
 function Courses() {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const {userData} = useSelector(state=>state.user);
     // map course creator
     const {creatorCourseData} = useSelector(state=>state.course);
+    useEffect(() =>{
+        const creatorCourses = async() =>{
+            try {
+                const result = await axios.get(serverUrl + "/api/course/getcreator" , {withCredentials:true});
+                console.log(result.data);
+                dispatch(setCreatorCourseData(result.data));
+            } catch (error) {
+                console.log(error);    
+            }
+        }
+       creatorCourses();
+    },[userData]);
 
   return (
     <div className='flex min-h-screen bg-gray-100'>
