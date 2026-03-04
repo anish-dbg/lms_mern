@@ -37,8 +37,8 @@ function Courses() {
                 <FaArrowLeftLong className='w-[22px] h-[22px] cursor-pointer' onClick={() => navigate("/dashborad")}/>
                     <h1 className='text-2xl font-semibold'>All Created Courses</h1>
             </div>
-        </div> 
          <button className='bg-[black] text-white px-4 py-2 rounded hover:bg-gray-500' onClick={() => navigate('/createcourses')}>Create Course</button>
+        </div> 
           {/* for large Screen table */}
           <div className='hidden md:block bg-white rounded-xl shadow p-4 overflow-x-auto mt-6'>
             <table className='min-w-full text-sm'>
