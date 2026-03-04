@@ -78,7 +78,7 @@ export const editCourse = async (req,res) =>{
             }) 
         }
         const updateData = {title,subTitle,description,category,level,isPublished,price,thumbnail};
-        course = await Course.findByIdAndUpdate(courseId,updateDate,{new:true});
+        course = await Course.findByIdAndUpdate(courseId,updateData,{new:true});
         return res.status(200).json(course);
     } catch (error) {
          return res.status(500).json({
