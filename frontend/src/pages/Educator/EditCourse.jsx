@@ -273,12 +273,12 @@ const navigate = useNavigate();
               onClick={() => thumb.current.click()}
             />
           </div>
-          <div className='flex flex-col '>
-            <button className="flex items-center bg-green-100 text-green px-4 py-2 border-1 rounded-md hover:bg-green-600 cursor-pointer" onClick={handleUpdate}>
+          <div className='flex items-center justify-start gap-[15px]'>
+            <button  className="bg-green-100 text-green-600 px-4 py-2 rounded-md border-1 cursor-pointer" onClick={handleUpdate}>
              {loading ?<ClipLoader size={30} color="white"/>: "Save"}
             </button>
             <button
-              className="bg-[#eec5c5] hover:bg-red-200 text-red border-red cursor-pointer px-4 py-2 rounded-md"
+             className="bg-red-600 text-white px-7 py-2 rounded-md border-1 cursor-pointer"
               onClick={() => navigate("/courses")}
             >
               Cancel
