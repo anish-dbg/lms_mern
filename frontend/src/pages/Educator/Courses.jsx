@@ -34,7 +34,7 @@ function Courses() {
         <div className='flex flex-col sm:flex-row justify-between items-center sm:items-center mb-6 gap-3'>
             {/* for large Screen table */}
             <div className='flex items-center justify-center gap-3'>
-                <FaArrowLeftLong className='w-[22px] h-[22px] cursor-pointer' onClick={() => navigate("/dashborad")}/>
+                <FaArrowLeftLong className='w-[22px] h-[22px] cursor-pointer' onClick={() => navigate("/")}/>
                     <h1 className='text-2xl font-semibold'>All Created Courses</h1>
             </div>
          <button className='bg-[black] text-white px-4 py-2 rounded hover:bg-gray-500' onClick={() => navigate('/createcourses')}>Create Course</button>
