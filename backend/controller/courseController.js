@@ -93,7 +93,7 @@ export const editCourse = async (req,res) =>{
 export const getCourseById = async(req,res) =>{
     try {
         const {courseId} = req.params;
-        let course = await course.findById(courseId);
+        let course = await Course.findById(courseId);
         if(!course){
             return res.status(400).json({
                 msg: "Course is not found"
@@ -113,13 +113,13 @@ export const getCourseById = async(req,res) =>{
 export const removeCourse = async(req,res) =>{
     try {
         const {courseId} = req.params;
-        let course = await course.findById(courseId);
+        let course = await Course.findById(courseId);
         if(!course){
             return res.status(400).json({
                 msg: "Course is not found"
             })
         }
-        course = await Course.findByIdAndDelete(courseId, {new:true});
+        await Course.findByIdAndDelete(courseId, {new:true});
         return res.status(200).json({
             msg: "Course removed"
         })
