@@ -9,9 +9,11 @@ import { SiGoogledataproc } from "react-icons/si";
 import { PiOpenAiLogoThin } from "react-icons/pi";
 import { BsDatabase } from "react-icons/bs";
 import { SiOpenaigym } from "react-icons/si";
+import { useNavigate } from 'react-router-dom';
 
 
 function ExploreCourses() {
+    const navigate = useNavigate();
   return (
     <div className='w-[100vw] min-h-[50vh] lg:h-[50vh] flex flex-col lg:flex-row items-center justify-center gap-4 px-[30px]'>
     {/* left/top div */}
@@ -19,7 +21,7 @@ function ExploreCourses() {
         <span className='text-[30px] font-semibold'>Explore</span>
         <span className='text-[30px] font-semibold'>Our Courses</span>
         <p className='text-[17px]'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam perspiciatis magnam quaerat porro eos nemo provident commodi quasi, vel quod ipsa numquam vero dolores culpa repellendus quia. Nihil, voluptatem.</p>
-        <button className='px-[20px] py-[10px] border-2 bg-[black] border-white text-white rounded-[10px] text-[18px] font-light flex gap-2 mt-[30px] cursor-pointer'>Explore Courses <SiViaplay className='w-[30px] h-[30px] lg:fill-white' /></button>
+        <button className='px-[20px] py-[10px] border-2 bg-[black] border-white text-white rounded-[10px] text-[18px] font-light flex gap-2 mt-[30px] cursor-pointer' onClick={() => navigate('/allcourses')}>Explore Courses <SiViaplay className='w-[30px] h-[30px] lg:fill-white' /></button>
     </div>
     {/* right/top div */}
     <div className='w-[720px] max-w-[90%] lg:h-[300px] md:min-h-[300px] flex items-center justify-center lg:gap-[60px] gap-[50px] flex-wrap mb-[50px] lg:mb-[0px]'>
