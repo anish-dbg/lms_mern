@@ -11,6 +11,8 @@ function AllCourses() {
     const {courseData} = useSelector(state=>state.course);
     const [category,setCategory] = useState([]);
     const [filterCourses,setFilterCourses] = useState([]);
+    const [isSiderbarVisible, setIsSidebarVisible] = useState(false);
+
 
     const toggleCategory = (e) =>{
         if(category.includes(e.target.value)){
@@ -41,8 +43,11 @@ function AllCourses() {
   return (
     <div className='flex min-h-screen bg-gray-50'>
         <Nav/>
+        <button className='fixed top-20 left-4 z-50 bg-white text-balck px-3 py-1 rounded md:hidden border-2 border-black' onClick={() =>setIsSidebarVisible(prev => !prev)}>
+            {isSiderbarVisible? 'Hide':'Show'}Filters
+        </button>
         {/* sideBar */}
-        <aside className='w-[260px] h-screen overflow-y-auto bg-black fixed top-0 left-0 p-6 py-[130px] border-r border-gray-200 shadow-md transition-transform duration-300 z-5'>
+        <aside className={`w-[260px] h-screen overflow-y-auto bg-black fixed top-0 left-0 p-6 py-[130px] border-r border-gray-200 shadow-md transition-transform duration-300 z-5 ${isSiderbarVisible ? "translate-x-0": "-translate-x-full"} md:block md:translate-x-0`}>
             <h2 className='text-xl font-bold flex items-center justify-center gap-2 text-gray-50 mb-6'><FaArrowLeftLong className='text-white ' onClick={() => navigate('/home')}/>Filter by Category</h2>
             <form action="" onSubmit={(e) =>e.preventDefault()} className='space-y-4 text-sm bg-gray-600 border-white text-[white] border p-[20px] rounded-2xl'>
                 <button className='px-[10px] py-[10px] bg-black text-white rounded-[10px] text-[15px] font-light flex items-center justify-center gap-2 cursor-pointer'>Search with AI <img src={ai} className='w-[30px] h-[30px] rounded-full' alt="" /></button>
