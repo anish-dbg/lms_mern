@@ -1,5 +1,6 @@
 import Course from "../model/courseModel.js";
 import uploadOnCloudinary from "../config/cloudinary.js";
+import Lecture from "../model/lectureModel.js";
 
 export const createCourse = async(req,res) =>{
     try {
@@ -130,3 +131,36 @@ export const removeCourse = async(req,res) =>{
     }
 }
 
+
+
+
+// for Lecture (create and lecture ander push krna hai)
+
+export const createLecture = async(req,res) =>{
+    try {
+        const {lectureTitle} = req.body;
+        const {courseId} = req.params;
+        if(lectureTitle || courseId){
+            returnres.status(400).json({
+                msg: "lectureTitle is required"
+            })
+        }
+        const lecture = await Lecture.create({lectureTitle});
+        const course = await Course.findById(courseId);
+        if(course){
+            course.lectures.push(lecture._id)
+        }
+        course.populate("lectures")
+        course.save()
+        return res.status(500).json({lecture,course})
+    } catch (error) {
+        
+        return res.status(500).json({
+            msg: `failed to delete Course ${error}`
+        })
+    }
+}
+
+
+
+// course lecture get
