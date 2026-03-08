@@ -131,9 +131,6 @@ export const removeCourse = async(req,res) =>{
     }
 }
 
-
-
-
 // for Lecture (create and lecture ander push krna hai)
 
 export const createLecture = async(req,res) =>{
