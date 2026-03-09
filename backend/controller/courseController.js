@@ -147,8 +147,8 @@ export const createLecture = async(req,res) =>{
         if(course){
             course.lectures.push(lecture._id)
         }
-        course.populate("lectures")
-        course.save()
+        await course.populate("lectures")
+        await course.save()
         return res.status(500).json({lecture,course})
     } catch (error) {
         
@@ -160,4 +160,75 @@ export const createLecture = async(req,res) =>{
 
 
 
-// course lecture get
+// course lecture get krna reducers
+
+export const getCourseLecture = async (req,res) =>{
+    try {
+        const {coursId} = req.params;
+        const course = await Course.findById(courseId);
+        if(!course) {
+            return res.status(404).json({
+                msg: "course is not found"
+            })
+        }
+        await course.populate("lectures");
+        await course.save();
+        return res.status(200).json(course);
+    } catch (error) {
+        return res.status(500).json({
+            msg: `failed to getCourseLecture ${error}`
+        })   
+    }
+}
+
+export const editLecture = async(req,res) =>{
+    try {
+        const {lectureId} = req.params;
+        const {isPreviewFree, lectureTitle} = req.body;
+        const lecture = await Lecture.findById(lectureId);
+        if(!lecture){
+            return res.status(404).json({
+                msg: "Lecture is not found"
+            })
+        }
+        let videoUrl;
+        if(req.file){
+            videoUrl = await uploadOnCloudinary(req.file.path);
+            lecture.videoUrl = videoUrl;
+        }
+        if(lectureTitle){
+            lecture.lectureTitle = lectureTitle;
+         }
+       lecture.isPreviewFree = isPreviewFree;
+       await lecture.save();
+       return res.status(200).json(lecture);
+    } catch (error) {
+        return res.status(500).json({
+            msg: `failed to edit Lecture ${error}`
+        })        
+    }
+}
+
+
+// lecture removed
+
+export const removeLecture = async(req,res) =>{
+    try {
+        const {lectureId} = req.params;
+        const lecture = await Lecture.findByIdAndDelete(lectureId);
+        if(lecture){
+            return res.status(404).json({
+                msg: "Lecture is not found"
+            })
+        }
+        await Course.updateOne({lectures:lectureId},{$pull:{lectures:lectureId}});
+        return res.status(200).json({
+            msg: "Lecture Removed"
+        })
+    } catch (error) {
+        return res.status(500).json({
+            msg:`failed to remove Lecture ${error}`
+        })
+    }
+}
+
