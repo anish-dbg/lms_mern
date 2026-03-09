@@ -132,39 +132,37 @@ export const removeCourse = async(req,res) =>{
 }
 
 // for Lecture (create and lecture ander push krna hai)
+export const createLecture = async (req,res)=>{
+  try {
 
-export const createLecture = async(req,res) =>{
-    try {
-        const {lectureTitle} = req.body;
-        const {courseId} = req.params;
-        if(lectureTitle || courseId){
-            returnres.status(400).json({
-                msg: "lectureTitle is required"
-            })
-        }
-        const lecture = await Lecture.create({lectureTitle});
-        const course = await Course.findById(courseId);
-        if(course){
-            course.lectures.push(lecture._id)
-        }
-        await course.populate("lectures")
-        await course.save()
-        return res.status(500).json({lecture,course})
-    } catch (error) {
-        
-        return res.status(500).json({
-            msg: `failed to delete Course ${error}`
-        })
+    const {lectureTitle} = req.body;
+    const {courseId} = req.params;
+
+    if(!lectureTitle){
+      return res.status(400).json({msg:"Lecture title required"});
     }
-}
 
+    const lecture = await Lecture.create({lectureTitle});
+
+    await Course.findByIdAndUpdate(
+      courseId,
+      {$push:{lectures:lecture._id}}
+    );
+
+    return res.status(201).json({lecture});
+
+  } catch(error){
+    console.log("Create Lecture Error:",error);
+    return res.status(500).json({msg:"Failed to create lecture"});
+  }
+}
 
 
 // course lecture get krna reducers
 
 export const getCourseLecture = async (req,res) =>{
     try {
-        const {coursId} = req.params;
+        const {courseId} = req.params;
         const course = await Course.findById(courseId);
         if(!course) {
             return res.status(404).json({
