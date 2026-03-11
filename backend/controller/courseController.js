@@ -1,6 +1,7 @@
 import Course from "../model/courseModel.js";
 import uploadOnCloudinary from "../config/cloudinary.js";
 import Lecture from "../model/lectureModel.js";
+import User from "../model/userModel.js";
 
 export const createCourse = async(req,res) =>{
     try {
@@ -197,7 +198,7 @@ export const editLecture = async(req,res) =>{
         if(lectureTitle){
             lecture.lectureTitle = lectureTitle;
          }
-       lecture.isPreviewFree = isPreviewFree;
+       lecture.isPreviewFree = isPreviewFree === "true";
        await lecture.save();
        return res.status(200).json(lecture);
     } catch (error) {
@@ -230,3 +231,22 @@ export const removeLecture = async(req,res) =>{
     }
 }
 
+
+// creater ke course ko view krana hai
+
+export const getCreatorById = async(req,res) =>{
+    try {
+        const {userId} = req.body;
+        const user = await User.findById(userId).select('-password');
+
+        if(!user){
+            return res.status(404).json({msg: "User is not Found"})
+        }
+        return res.status(200).json(user);
+    } catch (error) {
+        return res.status(500).json({
+            msg: `failed to get Creator ${error}`
+        })
+        
+    }
+}
