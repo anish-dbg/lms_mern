@@ -10,12 +10,14 @@ import { FaLock } from "react-icons/fa";
 import axios from "axios";
 import { serverUrl } from "../App";
 import Card from "../component/Card";
+import { toast } from "react-toastify";
 
 function ViewCourse() {
   const navigate = useNavigate();
   const { courseId } = useParams();
   const { courseData } = useSelector((state) => state.course);
   const { selectedCourse } = useSelector((state) => state.course);
+  const {userData} = useSelector(state=>state.user);
   const dispatch = useDispatch();
   const [selectedLecture, setSelectedLecture] = useState(null);
   const [creatorData, setCreatorData] = useState(null);
@@ -66,6 +68,40 @@ useEffect(() => {
 }, [creatorData, courseData, courseId]);
 
 
+const handleEnroll = async(userId, courseId) =>{
+  try {
+    const orderData = await axios.post(serverUrl + '/api/order/razorpay-order', {userId,courseId}, {withCredentials:true});
+    console.log(orderData);
+
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: orderData.data.amount,
+      currency: 'INR',
+      name: 'Virtual Courses',
+      description: 'Course Enrollment payment',
+      order_id: orderData.data.id,
+      handler: async function(response){
+        console.log("Razorpay Response", response)
+        try {
+          const verifyPayment = await axios.post(serverUrl + '/api/order/verify-payment', {...response, courseId, userId}, {withCredentials:true});
+          toast.success(verifyPayment.data.msg);
+        } catch (error) {
+          toast.error(error.response.data.msg);
+        }
+      }
+    }
+    const rzp = new window.Razorpay(options);
+    rzp.open()
+  } catch (error) {
+    console.log(error);
+    toast.error("Something went wrong");
+    
+  }
+}
+
+
+
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-6xl mx-auto bg-white shadow-md rounded-xl p-6 space-y-6 relative">
@@ -108,7 +144,7 @@ useEffect(() => {
                 <li>✅ 10+ hours of video content</li>
                 <li>✅ Lifetime access to course materials</li>
               </ul>
-              <button className="bg-[black] text-white px-6 py-2 rounded hover:bg-gray-700 mt-3 cursor-pointer">
+              <button className="bg-[black] text-white px-6 py-2 rounded hover:bg-gray-700 mt-3 cursor-pointer" onClick={() =>handleEnroll(userData?._id,courseId)}>
                 Enroll Now
               </button>
             </div>
