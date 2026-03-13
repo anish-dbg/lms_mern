@@ -12,22 +12,24 @@ import EditProfile from "./pages/EditProfile";
 import Dashboard from "./pages/Educator/Dashboard";
 import Courses from "./pages/Educator/Courses";
 import CreateCourses from "./pages/Educator/CreateCourses";
-import GetCreatorCourse from "./customHooks/GetCreatorCourse";
 import EditCourse from "./pages/Educator/EditCourse";
-import GetPublishedCourse from "./customHooks/GetPublishedCourse";
 import AllCourses from "./pages/AllCourses";
 import CreateLecture from "./pages/Educator/CreateLecture";
 import EditLecture from "./pages/Educator/EditLecture";
 import ViewCourse from "./pages/ViewCourse";
 import ScrollToTop from "./component/ScrollToTop";
 import ViewLectures from "./pages/ViewLectures";
+import MyEnrolledCourses from "./pages/MyEnrolledCourses";
+import useGetCurrentuser from "./customHooks/GetCurrentUser";
+import useGetCreatorCourse from "./customHooks/GetCreatorCourse";
+import useGetPublishedCourse from "./customHooks/GetPublishedCourse";
 
 export const serverUrl = "http://localhost:8000";
 
 function App() {
-  GetCurrentuser();
-  GetCreatorCourse();
-  GetPublishedCourse();
+  useGetCurrentuser();
+  useGetCreatorCourse();
+  useGetPublishedCourse();
   const { userData } = useSelector((state) => state.user);
   return (
     <>
@@ -119,9 +121,9 @@ function App() {
          <Route
           path="/viewcourse/:courseId"
           element={
-            userData?.role === "educator" ? (
+            userData?
               <ViewCourse />
-            ) : (
+             : (
               <Navigate to={"/signup"} />
             )
           }
@@ -129,9 +131,19 @@ function App() {
          <Route
           path="/viewlecture/:courseId"
           element={
-            userData?.role === "educator" ? (
+            userData?
               <ViewLectures />
-            ) : (
+             : (
+              <Navigate to={"/signup"} />
+            )
+          }
+        />
+         <Route
+          path="/mycourses"
+          element={
+            userData?
+              <MyEnrolledCourses />
+            : (
               <Navigate to={"/signup"} />
             )
           }

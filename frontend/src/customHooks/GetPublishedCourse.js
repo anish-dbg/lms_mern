@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 
-const GetPublishedCourse = () =>{
+const useGetPublishedCourse = () =>{
     const dispatch = useDispatch();
     useEffect(() =>{
         const getCourseData = async () =>{
@@ -22,4 +22,4 @@ const GetPublishedCourse = () =>{
     },[])
 }
 
-export default GetPublishedCourse;
+export default useGetPublishedCourse;

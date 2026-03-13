@@ -25,7 +25,7 @@ function Profile() {
         </div>
         <div className='text-sm flex items-center justify-start'>
           <span className='font-semibold text-gray-700'>EnrolledCourses: </span>
-          <span>{userData.enrolledCourses}</span>
+          <span>{userData.enrolledCourses?.length}</span>
         </div>
       </div>
       <div className='mt-6 flex justify-center gap-4'><button className='px-5 py-2 rounded bg-[black] text-white active:bg-[#4b4b4b] cursor-pointer transsition' onClick={() =>navigate('/editprofile')}>Edit Profile</button></div>

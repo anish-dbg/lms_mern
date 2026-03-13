@@ -11,20 +11,20 @@ import axios from "axios";
 import { serverUrl } from "../App";
 import Card from "../component/Card";
 import { toast } from "react-toastify";
+import { setUserData } from "../redux/userSlice";
 
 function ViewCourse() {
   const navigate = useNavigate();
   const { courseId } = useParams();
   const { courseData } = useSelector((state) => state.course);
   const { selectedCourse } = useSelector((state) => state.course);
-  const {userData} = useSelector(state=>state.user);
+  const { userData } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [selectedLecture, setSelectedLecture] = useState(null);
   const [creatorData, setCreatorData] = useState(null);
   // creatorData  ki id courseid se match krega usko render krwana hai
   const [creatorCourses, setCreatorCourses] = useState([]);
-  const [isEnrolled,setIsEnrolled] = useState(false);
-
+  const [isEnrolled, setIsEnrolled] = useState(false);
 
   const fetchCourseData = () => {
     const course = courseData.find((course) => course._id === courseId);
@@ -33,89 +33,98 @@ function ViewCourse() {
     }
   };
 
- 
-useEffect(() => {
-  const handleCreator = async () => {
-    if (!selectedCourse?.creator) return;
+  useEffect(() => {
+    const handleCreator = async () => {
+      if (!selectedCourse?.creator) return;
 
-    try {
-      const result = await axios.post(
-        `${serverUrl}/api/course/creator`,
-        { userId: selectedCourse.creator },
-        { withCredentials: true }
-      );
+      try {
+        const result = await axios.post(
+          `${serverUrl}/api/course/creator`,
+          { userId: selectedCourse.creator },
+          { withCredentials: true },
+        );
 
-      console.log(result.data);
-      setCreatorData(result.data);
-    } catch (error) {
-      console.log("Creator API Error:", error);
+        console.log(result.data);
+        setCreatorData(result.data);
+      } catch (error) {
+        console.log("Creator API Error:", error);
+      }
+    };
+
+    handleCreator();
+  }, [selectedCourse]);
+
+  const checkEnrollment = () => {
+    const verify = userData?.enrolledCourses?.some(
+      (c) =>
+        (typeof c === "string" ? c : c._id).toString() === courseId?.toString(),
+    );
+    if (verify) {
+      setIsEnrolled(true);
     }
   };
 
-  handleCreator();
-}, [selectedCourse]);
-
-
-const checkEnrollment = () =>{
-  const verify = userData?.enrolledCourses?.some(c => (typeof c === 'string' ? c: c._id).toString() === courseId?.toString());
-  if(verify){
-    setIsEnrolled(true);
-  }
-}
-
- useEffect(() => {
+  useEffect(() => {
     fetchCourseData();
     checkEnrollment();
   }, [courseData, courseId, userData]);
-  
 
   useEffect(() => {
-  if (!creatorData?._id || !courseData?.length) return;
+    if (!creatorData?._id || !courseData?.length) return;
 
-  const creatorCourse = courseData.filter(
-    (course) =>
-      course.creator === creatorData._id &&
-      course._id !== courseId
-  );
+    const creatorCourse = courseData.filter(
+      (course) => course.creator === creatorData._id && course._id !== courseId,
+    );
 
-  setCreatorCourses(creatorCourse);
-}, [creatorData, courseData, courseId]);
+    setCreatorCourses(creatorCourse);
+  }, [creatorData, courseData, courseId]);
 
+  const handleEnroll = async (userId, courseId) => {
+    try {
+      const orderData = await axios.post(
+        serverUrl + "/api/order/razorpay-order",
+        { userId, courseId },
+        { withCredentials: true },
+      );
+      console.log(orderData);
 
-const handleEnroll = async(userId, courseId) =>{
-  try {
-    const orderData = await axios.post(serverUrl + '/api/order/razorpay-order', {userId,courseId}, {withCredentials:true});
-    console.log(orderData);
-
-    const options = {
-      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-      amount: orderData.data.amount,
-      currency: 'INR',
-      name: 'Virtual Courses',
-      description: 'Course Enrollment payment',
-      order_id: orderData.data.id,
-      handler: async function(response){
-        console.log("Razorpay Response", response)
-        try {
-          const verifyPayment = await axios.post(serverUrl + '/api/order/verify-payment', {...response, courseId, userId}, {withCredentials:true});
-          setIsEnrolled(true);
-          toast.success(verifyPayment.data.msg);
-        } catch (error) {
-          toast.error(error.response.data.msg);
-        }
-      }
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: orderData.data.amount,
+        currency: "INR",
+        name: "Virtual Courses",
+        description: "Course Enrollment payment",
+        order_id: orderData.data.id,
+        handler: async function (response) {
+          console.log("Razorpay Response", response);
+          try {
+            const verifyPayment = await axios.post(
+              serverUrl + "/api/order/verify-payment",
+              {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                courseId,
+                userId,
+              },
+              { withCredentials: true },
+            );
+            const user = await axios.get(serverUrl + '/api/user/getCurrentuser', {withCredentials:true});
+            dispatch(setUserData(user.data))
+            setIsEnrolled(true);
+            toast.success(verifyPayment.data.msg);
+          } catch (error) {
+            toast.error(error.response.data.msg);
+          }
+        },
+      };
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
     }
-    const rzp = new window.Razorpay(options);
-    rzp.open()
-  } catch (error) {
-    console.log(error);
-    toast.error("Something went wrong");
-    
-  }
-}
-
-
-
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -159,11 +168,21 @@ const handleEnroll = async(userId, courseId) =>{
                 <li>✅ 10+ hours of video content</li>
                 <li>✅ Lifetime access to course materials</li>
               </ul>
-              { !isEnrolled?<button className="bg-[black] text-white px-6 py-2 rounded hover:bg-gray-700 mt-3 cursor-pointer" onClick={() =>handleEnroll(userData?._id,courseId)} >
-                Enroll Now
-              </button>:<button className="bg-[black] text-green-500 px-6 py-2 rounded hover:bg-green-700 mt-3 cursor-pointer" onClick={() => navigate(`/viewlecture/${courseId}`)} >
-                Watch Now
-              </button>}
+              {!isEnrolled ? (
+                <button
+                  className="bg-[black] text-white px-6 py-2 rounded hover:bg-gray-700 mt-3 cursor-pointer"
+                  onClick={() => handleEnroll(userData?._id, courseId)}
+                >
+                  Enroll Now
+                </button>
+              ) : (
+                <button
+                  className="bg-[black] text-green-500 px-6 py-2 rounded hover:bg-green-700 mt-3 cursor-pointer"
+                  onClick={() => navigate(`/viewlecture/${courseId}`)}
+                >
+                  Watch Now
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -244,45 +263,60 @@ const handleEnroll = async(userId, courseId) =>{
         </div>
         {/* review */}
         <div className="mt-8 border-t pt-6">
-            <h2 className="text-xl font-semibold mb-2">
-                Write a Reviews
-            </h2>
-            <div className="mb-4">
-                <div className="flex gap-1 mb-2">
-                    {
-                        [1,2,3,4,5].map((star) =>(
-                          <FaStar key={star} className="fill-gray-300"/>
-                        ))
-                    }
-                </div>
-                <textarea className='w-full border border-gray-300 rounded-lg p-2' placeholder="Write review here..." rows={3} />
-                <button className="bg-black text-white mt-3 px-4 py-2 rounded hover:bg-gray-800">Submit Review</button>
+          <h2 className="text-xl font-semibold mb-2">Write a Reviews</h2>
+          <div className="mb-4">
+            <div className="flex gap-1 mb-2">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <FaStar key={star} className="fill-gray-300" />
+              ))}
             </div>
+            <textarea
+              className="w-full border border-gray-300 rounded-lg p-2"
+              placeholder="Write review here..."
+              rows={3}
+            />
+            <button className="bg-black text-white mt-3 px-4 py-2 rounded hover:bg-gray-800">
+              Submit Review
+            </button>
+          </div>
         </div>
         {/* for creator info */}
         <div className="flex items-center gap-4 border-t">
-            {creatorData?.photoUrl? <img src={creatorData?.photoUrl} className="w-16 h-16 rounded-full object-cover border-1 border-gray-200"/>: <img className="w-16 h-16 rounded-full object-cover border-1 border-gray-200"/>}
-        <div>
-        <h2 className="text-lg font-semibold">
-            {creatorData?.name}
-        </h2>
-        <p className="md:text-sm text-gray-600 text-[10px]">{creatorData?.description}</p>
-        <p className='md:text-sm text-gray-600 text-[10px]'>{creatorData?.email}</p>
-        </div>
-        </div>
-        <div>
-            <p className="text-xl font-semibold mb-2">
-                Other Published Courses by the educator
+          {creatorData?.photoUrl ? (
+            <img
+              src={creatorData?.photoUrl}
+              className="w-16 h-16 rounded-full object-cover border-1 border-gray-200"
+            />
+          ) : (
+            <img className="w-16 h-16 rounded-full object-cover border-1 border-gray-200" />
+          )}
+          <div>
+            <h2 className="text-lg font-semibold">{creatorData?.name}</h2>
+            <p className="md:text-sm text-gray-600 text-[10px]">
+              {creatorData?.description}
             </p>
+            <p className="md:text-sm text-gray-600 text-[10px]">
+              {creatorData?.email}
+            </p>
+          </div>
+        </div>
+        <div>
+          <p className="text-xl font-semibold mb-2">
+            Other Published Courses by the educator
+          </p>
         </div>
         <div className="w-full transition-all duration-300 py-[20px] flex items-start justify-center lg:justify-start flex-wrap gap-6 lg:px-[80px]">
-            {
-                creatorCourses?.map((course,index) =>(
-                    <Card key={index} thumbnail={course.thumbnail} id={course._id} price={course.price} title={course.title} category={course.category}/>
-                ))
-            }
+          {creatorCourses?.map((course, index) => (
+            <Card
+              key={index}
+              thumbnail={course.thumbnail}
+              id={course._id}
+              price={course.price}
+              title={course.title}
+              category={course.category}
+            />
+          ))}
         </div>
-
       </div>
     </div>
   );
