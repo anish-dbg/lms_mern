@@ -22,7 +22,9 @@ function ViewCourse() {
   const [selectedLecture, setSelectedLecture] = useState(null);
   const [creatorData, setCreatorData] = useState(null);
   // creatorData  ki id courseid se match krega usko render krwana hai
-const [creatorCourses, setCreatorCourses] = useState([]);
+  const [creatorCourses, setCreatorCourses] = useState([]);
+  const [isEnrolled,setIsEnrolled] = useState(false);
+
 
   const fetchCourseData = () => {
     const course = courseData.find((course) => course._id === courseId);
@@ -31,9 +33,7 @@ const [creatorCourses, setCreatorCourses] = useState([]);
     }
   };
 
-  useEffect(() => {
-    fetchCourseData();
-  }, [courseData, courseId]);
+ 
 useEffect(() => {
   const handleCreator = async () => {
     if (!selectedCourse?.creator) return;
@@ -54,6 +54,20 @@ useEffect(() => {
 
   handleCreator();
 }, [selectedCourse]);
+
+
+const checkEnrollment = () =>{
+  const verify = userData?.enrolledCourses?.some(c => (typeof c === 'string' ? c: c._id).toString() === courseId?.toString());
+  if(verify){
+    setIsEnrolled(true);
+  }
+}
+
+ useEffect(() => {
+    fetchCourseData();
+    checkEnrollment();
+  }, [courseData, courseId, userData]);
+  
 
   useEffect(() => {
   if (!creatorData?._id || !courseData?.length) return;
@@ -84,6 +98,7 @@ const handleEnroll = async(userId, courseId) =>{
         console.log("Razorpay Response", response)
         try {
           const verifyPayment = await axios.post(serverUrl + '/api/order/verify-payment', {...response, courseId, userId}, {withCredentials:true});
+          setIsEnrolled(true);
           toast.success(verifyPayment.data.msg);
         } catch (error) {
           toast.error(error.response.data.msg);
@@ -144,9 +159,11 @@ const handleEnroll = async(userId, courseId) =>{
                 <li>✅ 10+ hours of video content</li>
                 <li>✅ Lifetime access to course materials</li>
               </ul>
-              <button className="bg-[black] text-white px-6 py-2 rounded hover:bg-gray-700 mt-3 cursor-pointer" onClick={() =>handleEnroll(userData?._id,courseId)}>
+              { !isEnrolled?<button className="bg-[black] text-white px-6 py-2 rounded hover:bg-gray-700 mt-3 cursor-pointer" onClick={() =>handleEnroll(userData?._id,courseId)} >
                 Enroll Now
-              </button>
+              </button>:<button className="bg-[black] text-green-500 px-6 py-2 rounded hover:bg-green-700 mt-3 cursor-pointer" onClick={() => navigate(`/viewlecture/${courseId}`)} >
+                Watch Now
+              </button>}
             </div>
           </div>
         </div>
