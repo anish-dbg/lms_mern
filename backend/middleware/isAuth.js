@@ -1,5 +1,4 @@
 // verify your token and put your verify token in req.userId mai
-
 import jwt from "jsonwebtoken";
 
 const isAuth = async(req,res,next) =>{

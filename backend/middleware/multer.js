@@ -1,7 +1,6 @@
 import multer from "multer";
 
 // storage create
-
 let storage = multer.diskStorage({
     destination:(req,file,cb)=>{
         cb(null, "./public")
