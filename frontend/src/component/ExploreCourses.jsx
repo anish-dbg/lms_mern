@@ -6,7 +6,6 @@ import { MdOutlineAppShortcut } from "react-icons/md";
 import { FaHackerrank } from "react-icons/fa6";
 import { SiOpenai } from "react-icons/si";
 import { SiGoogledataproc } from "react-icons/si";
-import { PiOpenAiLogoThin } from "react-icons/pi";
 import { BsDatabase } from "react-icons/bs";
 import { SiOpenaigym } from "react-icons/si";
 import { useNavigate } from 'react-router-dom';
