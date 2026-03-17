@@ -37,14 +37,18 @@ export const createReview = async(req,res) =>{
 }
 
 
-export const getReview = async (req,res) =>{
+export const getReview = async (req, res) => {
     try {
-        const review = (await Review.find({}).populate('user', 'name, photoUrl,role')).sort({reviewedAt: -1});
+        const review = await Review.find({})
+            .populate('user', 'name photoUrl description')
+            .populate('course', 'title')
+            .sort({ reviewedAt: -1 });
+
         return res.status(200).json(review);
     } catch (error) {
+        console.error("GET REVIEW ERROR:", error);
         return res.status(500).json({
-            msg:`Failed to get review ${error}`
-        })
-        
+            msg: `Failed to get review ${error}`
+        });
     }
 }
