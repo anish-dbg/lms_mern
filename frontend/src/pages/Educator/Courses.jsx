@@ -16,13 +16,14 @@ function Courses() {
     // map course creator
     const {creatorCourseData} = useSelector(state=>state.course);
     useEffect(() =>{
+        if(!userData) return;
         const creatorCourses = async() =>{
             try {
                 const result = await axios.get(serverUrl + "/api/course/getcreator" , {withCredentials:true});
                 console.log(result.data);
                 dispatch(setCreatorCourseData(result.data));
             } catch (error) {
-                console.log(error);    
+                console.log(error.response?.data || error);    
             }
         }
        creatorCourses();

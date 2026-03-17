@@ -53,7 +53,7 @@ function AllCourses() {
         <h2 className="text-xl font-bold flex items-center justify-center gap-2 text-gray-50 mb-6">
           <FaArrowLeftLong
             className="text-white "
-            onClick={() => navigate("/home")}
+            onClick={() => navigate("/")}
           />
           Filter by Category
         </h2>
