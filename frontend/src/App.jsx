@@ -23,6 +23,7 @@ import MyEnrolledCourses from "./pages/MyEnrolledCourses";
 import useGetCurrentuser from "./customHooks/GetCurrentUser";
 import useGetCreatorCourse from "./customHooks/GetCreatorCourse";
 import useGetPublishedCourse from "./customHooks/GetPublishedCourse";
+import useGetAllReviews from "./customHooks/GetAllReviews";
 
 export const serverUrl = "http://localhost:8000";
 
@@ -30,6 +31,8 @@ function App() {
   useGetCurrentuser();
   useGetCreatorCourse();
   useGetPublishedCourse();
+  useGetAllReviews();
+  
   const { userData } = useSelector((state) => state.user);
   return (
     <>

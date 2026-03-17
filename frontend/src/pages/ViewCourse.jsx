@@ -45,18 +45,21 @@ function ViewCourse() {
       setLoading(false);
       toast.error(error.response.data.msg);
       setRating(0);
-      setComment(0); 
+      setComment(""); 
     }
 
   }
- 
+  
+  const calculateAvgReview = (reviews) =>{
+    if(!reviews || reviews.length === 0){
+      return 0;
+    }
+    const total = reviews.reduce((sum, review) => sum + review.rating, 0);
+    return (total / reviews.length).toFixed(1);
+  }
 
-
-
-
-
-
-
+  const avgRating = calculateAvgReview(selectedCourse?.reviews);
+  // console.log('Avg Rating: ', avgRating);
 
 
   const fetchCourseData = () => {
@@ -187,7 +190,7 @@ function ViewCourse() {
             <div className="flex items-start flex-col justify-between">
               <div className="text-yellow-500 font-medium flex gap-2">
                 <span className="flex items-center justify-start gap-1">
-                  <FaStar />5
+                  <FaStar />{avgRating}
                 </span>
                 <span className="text-gray-400 ">(1,200) Reviews</span>
               </div>
@@ -351,6 +354,7 @@ function ViewCourse() {
               price={course.price}
               title={course.title}
               category={course.category}
+              reviews={course.reviews}
             />
           ))}
         </div>
