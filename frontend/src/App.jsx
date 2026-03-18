@@ -24,6 +24,7 @@ import useGetCurrentuser from "./customHooks/GetCurrentUser";
 import useGetCreatorCourse from "./customHooks/GetCreatorCourse";
 import useGetPublishedCourse from "./customHooks/GetPublishedCourse";
 import useGetAllReviews from "./customHooks/GetAllReviews";
+import SearchWithAi from "./pages/SearchWithAi";
 
 export const serverUrl = "http://localhost:8000";
 
@@ -146,6 +147,16 @@ function App() {
           element={
             userData?
               <MyEnrolledCourses />
+            : (
+              <Navigate to={"/signup"} />
+            )
+          }
+        />
+         <Route
+          path="/search"
+          element={
+            userData?
+              <SearchWithAi />
             : (
               <Navigate to={"/signup"} />
             )
