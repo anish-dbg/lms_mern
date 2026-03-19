@@ -26,7 +26,7 @@ import useGetPublishedCourse from "./customHooks/GetPublishedCourse";
 import useGetAllReviews from "./customHooks/GetAllReviews";
 import SearchWithAi from "./pages/SearchWithAi";
 
-export const serverUrl = "https://lms-mern-qf8b.onrender.com";
+export const serverUrl = "https://lms-mern-lfzx.onrender.com";
 
 function App() {
   useGetCurrentuser();
