@@ -41,10 +41,7 @@ function App() {
       <ScrollToTop/>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route
-          path="/signup"
-          element={!userData ? <SignUp /> : <Navigate to={"/"} />}
-        />
+        <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route
           path="/profile"
