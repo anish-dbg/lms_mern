@@ -30,8 +30,18 @@ app.use('/api/review',reviewRouter )
 app.get("/",(req,res) =>{
     res.send("Hello From server");
 })
+const startServer = async () => {
+  try {
+    await connectDB();   // ✅ FIRST connect DB
+    console.log("✅ DB Connected");
 
-app.listen(port,()=>{
-    console.log("server started");
-    connectDB();
-})
+    app.listen(port, () => {
+      console.log("🚀 Server started");
+    });
+
+  } catch (error) {
+    console.log("❌ DB connection failed:", error);
+  }
+};
+
+startServer();
