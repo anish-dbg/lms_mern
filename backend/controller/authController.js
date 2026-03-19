@@ -45,42 +45,59 @@ export const signUp = async (req,res) =>{
     }
 }
 
+export const login = async (req, res) => {
+  try {
+    console.log("BODY:", req.body);
 
-export const login = async (req,res) =>{
-    try{
-        const { email, password} = req.body;
-        let user = await User.findOne({email});
-        if(!user){
-            return res.status(404).json({msg: "User not found"});
-        }
-        let isMatch = await bcrypt.compare(password, user.password);
-        if(!isMatch){
-            return res.status(400).json({msg: "Incorrect password"});
-        }
-        let token = await genToken(user._id);
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure:true,
-            sameSite: "none",
-            maxAge: 7*24*60*60*1000
-        })
-        return res.status(200).json(user);
-    }catch(error){
-       return res.status(500).json({msg: `Login error ${error}`})
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        msg: "User not found",
+      });
     }
-}
 
-
-export const logout = async(req,res) =>{
-    // cookie ko clear krna hota hai
-    try{
-        await res.clearCookie("token");
-        return res.status(200).json({msg: "Logout Successfully"});
-    }catch(error){
-      return res.status(500).json({msg: `Logout error ${error}`});
+    // ✅ handle google users (no password)
+    if (!user.password) {
+      return res.status(400).json({
+        msg: "Please login with Google",
+      });
     }
-}
 
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({
+        msg: "Incorrect password",
+      });
+    }
+
+    // ✅ check JWT_SECRET
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET missing");
+    }
+
+    const token = await genToken(user._id);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.status(200).json(user);
+
+  } catch (error) {
+    console.error("🔥 LOGIN ERROR:", error);
+
+    return res.status(500).json({
+      msg: error.message,
+    });
+  }
+};
 
 export const sendOTP = async(req,res) =>{
     try {
