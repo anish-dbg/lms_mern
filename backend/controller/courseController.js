@@ -180,31 +180,40 @@ export const removeCourse = async(req,res) =>{
 }
 
 // for Lecture (create and lecture ander push krna hai)
-export const createLecture = async (req,res)=>{
+export const createLecture = async (req, res) => {
   try {
+    const { lectureTitle } = req.body;
+    const { courseId } = req.params;
 
-    const {lectureTitle} = req.body;
-    const {courseId} = req.params;
-
-    if(!lectureTitle){
-      return res.status(400).json({msg:"Lecture title required"});
+    // ✅ ADD THIS
+    if (!courseId) {
+      return res.status(400).json({ msg: "Course ID is required" });
     }
 
-    const lecture = await Lecture.create({lectureTitle});
+    if (!lectureTitle) {
+      return res.status(400).json({ msg: "Lecture title required" });
+    }
 
-    await Course.findByIdAndUpdate(
+    const lecture = await Lecture.create({ lectureTitle });
+
+    const course = await Course.findByIdAndUpdate(
       courseId,
-      {$push:{lectures:lecture._id}}
+      { $push: { lectures: lecture._id } },
+      { new: true }
     );
 
-    return res.status(201).json({lecture});
+    // ✅ extra safety
+    if (!course) {
+      return res.status(404).json({ msg: "Course not found" });
+    }
 
-  } catch(error){
-    console.log("Create Lecture Error:",error);
-    return res.status(500).json({msg:"Failed to create lecture"});
+    return res.status(201).json({ lecture });
+
+  } catch (error) {
+    console.log("Create Lecture Error:", error);
+    return res.status(500).json({ msg: error.message });
   }
-}
-
+};
 
 // course lecture get krna reducers
 
