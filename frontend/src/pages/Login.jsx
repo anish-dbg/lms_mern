@@ -48,7 +48,7 @@ function Login() {
     let role = "";
 
     const result = await axios.post(serverUrl + "/api/auth/googleauth",{name:name,email:email,role},{withCredentials:true});
-    dispatch(setUserData(result.data.user));
+    dispatch(setUserData(result.data));
     navigate("/");
     toast.success("Login Successfully");
   } catch (error) {
