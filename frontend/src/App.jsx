@@ -40,7 +40,7 @@ function App() {
       <ToastContainer />
       <ScrollToTop/>
       <Routes>
-        <Route path="*" element={<Home />} />
+        <Route path="/" element={<Home />} />
         <Route
           path="/signup"
           element={!userData ? <SignUp /> : <Navigate to={"/"} />}
