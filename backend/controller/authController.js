@@ -158,18 +158,21 @@ export const resetPassword = async (req,res) =>{
     }
 }
 
-
 export const googleAuth = async (req, res) => {
   try {
+    console.log("📥 BODY:", req.body);
+
     const { name, email, role } = req.body;
 
     if (!email) {
-      return res.status(400).json({ msg: "Email is required" });
+      throw new Error("Email is missing from request");
     }
 
     let user = await User.findOne({ email });
 
     if (!user) {
+      console.log("👤 Creating new user");
+
       user = await User.create({
         name,
         email,
@@ -189,9 +192,10 @@ export const googleAuth = async (req, res) => {
     return res.status(200).json(user);
 
   } catch (error) {
-    console.error("🔥 GOOGLE AUTH ERROR:", error);
+    console.error("🔥 GOOGLE AUTH ERROR FULL:", error); // 👈 IMPORTANT
     return res.status(500).json({
       msg: error.message,
+      stack: error.stack, // 👈 TEMP (for debugging)
     });
   }
 };
