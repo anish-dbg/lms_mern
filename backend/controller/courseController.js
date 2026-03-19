@@ -65,29 +65,76 @@ export const getCreatorCourses = async(req,res) =>{
 
 // edit courses
 
-export const editCourse = async (req,res) =>{
-    try {
-        const {courseId} = req.params; // useParams set and get kr denge
-        const {title,subTitle,description,category,level,isPublished,price} = req.body;
-        let thumbnail;
-        if(req.file){
-            thumbnail = await uploadOnCloudinary(req.file.path);
-        }
-        let course = await Course.findById(courseId);
-        if(!course){
-            return res.status(400).json({
-                msg: "Course is not found"
-            }) 
-        }
-        const updateData = {title,subTitle,description,category,level,isPublished,price,thumbnail};
-        course = await Course.findByIdAndUpdate(courseId,updateData,{new:true});
-        return res.status(200).json(course);
-    } catch (error) {
-         return res.status(500).json({
-            msg: `failed to edit courses ${error}`
-        })
+export const editCourse = async (req, res) => {
+  try {
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
+    console.log("PARAMS:", req.params);
+
+    const { courseId } = req.params;
+
+    if (!courseId) {
+      return res.status(400).json({
+        msg: "CourseId is required",
+      });
     }
-}
+
+    const {
+      title,
+      subTitle,
+      description,
+      category,
+      level,
+      isPublished,
+      price,
+    } = req.body;
+
+    let course = await Course.findById(courseId);
+
+    if (!course) {
+      return res.status(404).json({
+        msg: "Course is not found",
+      });
+    }
+
+    // ✅ build update object safely
+    const updateData = {};
+
+    if (title) updateData.title = title;
+    if (subTitle) updateData.subTitle = subTitle;
+    if (description) updateData.description = description;
+    if (category) updateData.category = category;
+    if (level) updateData.level = level;
+    if (price) updateData.price = price;
+
+    if (isPublished !== undefined) {
+      updateData.isPublished = isPublished;
+    }
+
+    // ✅ SAFE file handling
+    if (req.file && req.file.path) {
+      const uploaded = await uploadOnCloudinary(req.file.path);
+      if (uploaded) {
+        updateData.thumbnail = uploaded;
+      }
+    }
+
+    course = await Course.findByIdAndUpdate(
+      courseId,
+      updateData,
+      { new: true }
+    );
+
+    return res.status(200).json(course);
+
+  } catch (error) {
+    console.error("🔥 EDIT COURSE ERROR:", error);
+
+    return res.status(500).json({
+      msg: error.message,
+    });
+  }
+};
 
 
 //  getCourseById
@@ -179,34 +226,51 @@ export const getCourseLecture = async (req,res) =>{
         })   
     }
 }
+export const editLecture = async (req, res) => {
+  try {
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
+    console.log("PARAMS:", req.params);
 
-export const editLecture = async(req,res) =>{
-    try {
-        const {lectureId} = req.params;
-        const {isPreviewFree, lectureTitle} = req.body;
-        const lecture = await Lecture.findById(lectureId);
-        if(!lecture){
-            return res.status(404).json({
-                msg: "Lecture is not found"
-            })
-        }
-        let videoUrl;
-        if(req.file){
-            videoUrl = await uploadOnCloudinary(req.file.path);
-            lecture.videoUrl = videoUrl;
-        }
-        if(lectureTitle){
-            lecture.lectureTitle = lectureTitle;
-         }
-       lecture.isPreviewFree = isPreviewFree === "true";
-       await lecture.save();
-       return res.status(200).json(lecture);
-    } catch (error) {
-        return res.status(500).json({
-            msg: `failed to edit Lecture ${error}`
-        })        
+    const { lectureId } = req.params;
+    const { isPreviewFree, lectureTitle } = req.body;
+
+    const lecture = await Lecture.findById(lectureId);
+
+    if (!lecture) {
+      return res.status(404).json({
+        msg: "Lecture is not found",
+      });
     }
-}
+
+    // ✅ SAFE FILE HANDLING
+    if (req.file && req.file.path) {
+      const videoUrl = await uploadOnCloudinary(req.file.path);
+      lecture.videoUrl = videoUrl;
+    }
+
+    // ✅ SAFE TITLE UPDATE
+    if (lectureTitle) {
+      lecture.lectureTitle = lectureTitle;
+    }
+
+    // ✅ SAFE BOOLEAN
+    if (isPreviewFree !== undefined) {
+      lecture.isPreviewFree = isPreviewFree === "true";
+    }
+
+    await lecture.save();
+
+    return res.status(200).json(lecture);
+
+  } catch (error) {
+    console.error("🔥 EDIT LECTURE ERROR:", error);
+
+    return res.status(500).json({
+      msg: error.message,
+    });
+  }
+};
 
 
 // lecture removed

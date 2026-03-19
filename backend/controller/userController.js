@@ -27,51 +27,57 @@ export const getCurrentUser = async(req,res) =>{
         
     }
 }
+export const updateProfile = async (req, res) => {
+  try {
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
+    console.log("USERID:", req.userId);
 
-export const updateProfile = async (req,res) =>{
-    try{
-        const userId = req.userId;
+    const userId = req.userId;
 
-        if(!userId){
-            return res.status(400).json({
-                msg:"User not authenticated"
-            })
-        }
+    if (!userId) {
+      return res.status(401).json({
+        msg: "User not authenticated",
+      });
+    }
 
-        const updateData = {};
+    const updateData = {};
 
-        if(req.body.name){
-            updateData.name = req.body.name;
-        }
+    if (req.body.name) {
+      updateData.name = req.body.name;
+    }
 
-        if(req.body.description){
-            updateData.description = req.body.description;
-        }
-        
-        if(req.file){
-            const uploaded = await uploadOnCloudinary(req.file.path);
-            if(uploaded){
-                updateData.photoUrl = uploaded;
-            }
-        }
+    if (req.body.description) {
+      updateData.description = req.body.description;
+    }
 
-     const user = await User.findByIdAndUpdate(
-     userId,
-     updateData,
-     { returnDocument: 'after' }
+    // ✅ SAFE FILE HANDLING
+    if (req.file && req.file.path) {
+      const uploaded = await uploadOnCloudinary(req.file.path);
+      if (uploaded) {
+        updateData.photoUrl = uploaded;
+      }
+    }
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      updateData,
+      { new: true } // 🔥 FIX THIS (IMPORTANT)
     ).select("-password");
 
-        if(!user){
-            return res.status(404).json({
-                msg: "User not Found"
-            })
-        }
-
-        return res.status(200).json(user)
-
-    }catch(error){
-        return res.status(500).json({
-            msg:`updateProfile error ${error}`
-        })
+    if (!user) {
+      return res.status(404).json({
+        msg: "User not Found",
+      });
     }
-}
+
+    return res.status(200).json(user);
+
+  } catch (error) {
+    console.error("🔥 PROFILE ERROR:", error);
+
+    return res.status(500).json({
+      msg: error.message,
+    });
+  }
+};
