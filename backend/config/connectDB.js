@@ -4,7 +4,7 @@ const connectDB = async () => {
   try {
     mongoose.set("bufferCommands", false); // 🔥 IMPORTANT
 
-    const conn = await mongoose.connect(process.env.MONGODB_URI);
+    const conn = await mongoose.connect(process.env.MONGODB_URL);
 
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
 
