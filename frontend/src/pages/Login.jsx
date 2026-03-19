@@ -28,7 +28,7 @@ function Login() {
       const result = await axios.post(serverUrl + "/api/auth/login",{email,password},
         {withCredentials:true});
         // console.log(result.data);
-        dispatch(setUserData(result.data));
+        dispatch(setUserData(result.data.user));
         setLoading(false);
         navigate('/');
         toast.success("login Successfully");

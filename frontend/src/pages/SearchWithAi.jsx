@@ -7,8 +7,7 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { serverUrl } from '../App';
-import start from "../assets/start.mp3"
-import Course from '../../../backend/model/courseModel';
+import start from "../assets/start.mp3";
 
 
 
@@ -67,7 +66,7 @@ const SearchWithAi = () => {
     }
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-black to-gray-900 text-white flex flex-col items-center px-4 py-1 mt-4'>
+    <div className='min-h-screen bg-gradient-to-br from-black to-gray-900 text-white flex flex-col items-center px-4 py-1 pt-6'>
 
         {/* search component */}
         <div className='bg-white shadow-xl rounded-3xl p-6 sm:p-8 w-full max-w-2xl text-center relative'>

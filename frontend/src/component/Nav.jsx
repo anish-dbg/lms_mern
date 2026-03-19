@@ -36,7 +36,6 @@ function Nav() {
   return (
     <div>
       <div className="w-full h-[70px] fixed top-0 px-[20px] py-[10px] flex items-center justify-between bg-[#00000047] z-10">
-
         {/* Logo */}
         <div className="lg:w-[20%] w-[40%] lg:pl-[50px]">
           <img
@@ -48,14 +47,13 @@ function Nav() {
 
         {/* Desktop Menu */}
         <div className="w-[30%] lg:flex items-center justify-center gap-4 hidden">
-
           {/* Avatar */}
-          {!userData ? (
+          {!userData || !userData._id ? (
             <IoPersonCircle
               className="w-[50px] h-[50px] fill-white cursor-pointer"
               onClick={() => navigate("/login")}
             />
-          ) : userData?.photoUrl ? (
+          ) : userData?.photoUrl && userData.photoUrl !== "" ? (
             <img
               src={userData.photoUrl}
               alt="profile"
@@ -64,7 +62,7 @@ function Nav() {
             />
           ) : (
             <div
-              className="w-[50px] h-[50px] rounded-full bg-white text-black flex items-center justify-center text-[20px] border-2 border-white cursor-pointer"
+              className="w-[50px] h-[50px] rounded-full bg-gray-700 text-white flex items-center justify-center text-[20px] border-2 border-white cursor-pointer"
               onClick={() => setShow(!show)}
             >
               {userData?.name?.slice(0, 1).toUpperCase()}
@@ -82,7 +80,7 @@ function Nav() {
           )}
 
           {/* Login / Logout */}
-          {!userData ? (
+          {!userData || !userData._id ? (
             <span
               className="px-[20px] py-[10px] border-2 border-white text-white rounded-[10px] text-[18px] cursor-pointer bg-[#000000d5]"
               onClick={() => navigate("/login")}
@@ -101,7 +99,6 @@ function Nav() {
           {/* Dropdown */}
           {show && userData && (
             <div className="absolute top-[110%] right-[15%] flex flex-col items-center gap-2 text-[16px] rounded-md bg-white px-[15px] py-[10px] border-2 border-black">
-
               <span
                 className="bg-black text-white px-[30px] py-[10px] rounded-2xl hover:bg-gray-600 cursor-pointer"
                 onClick={() => navigate("/profile")}
@@ -115,7 +112,6 @@ function Nav() {
               >
                 My Courses
               </span>
-
             </div>
           )}
         </div>
@@ -134,16 +130,15 @@ function Nav() {
               : "-translate-x-full transition duration-500"
           }`}
         >
-
           <RxCross2
             className="w-[35px] h-[35px] fill-white absolute top-5 right-[4%]"
             onClick={() => setShowHam(false)}
           />
 
           {/* Avatar */}
-          {!userData ? (
+          {!userData || !userData._id ? (
             <IoPersonCircle className="w-[50px] h-[50px] fill-white" />
-          ) : userData?.photoUrl ? (
+          ) : userData?.photoUrl && userData.photoUrl !== "" ? (
             <img
               src={userData.photoUrl}
               alt="profile"
@@ -178,7 +173,7 @@ function Nav() {
             </div>
           )}
 
-          {!userData ? (
+          {!userData || !userData._id ? (
             <span
               className="w-[200px] h-[65px] border-2 border-white text-white bg-black rounded-[10px] flex items-center justify-center text-[18px] cursor-pointer"
               onClick={() => navigate("/login")}
@@ -193,7 +188,6 @@ function Nav() {
               Logout
             </span>
           )}
-
         </div>
       </div>
     </div>
