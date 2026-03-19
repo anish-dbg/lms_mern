@@ -99,6 +99,18 @@ export const login = async (req, res) => {
   }
 };
 
+
+export const logout = async(req,res) =>{
+    // cookie ko clear krna hota hai
+    try{
+        await res.clearCookie("token");
+        return res.status(200).json({msg: "Logout Successfully"});
+    }catch(error){
+      return res.status(500).json({msg: `Logout error ${error}`});
+    }
+}
+
+
 export const sendOTP = async(req,res) =>{
     try {
         // otp generate
