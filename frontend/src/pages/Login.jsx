@@ -91,7 +91,7 @@ function Login() {
              <span className='text-[18px] text-gray-500' >oogle</span>
            </div>
            <div className='text-[#6f6f6f]'>Create new account
-            <span className='underline underline-offset-1 text-[black] cursor-pointer' onClick={(e)=>{e.preventDefault(); navigate("/signup")} }> signup</span>
+            <span className='underline underline-offset-1 text-[black] cursor-pointer' onClick={(e)=>{e.preventDefault(); e.stopPropagation(); navigate("/signup")} }> signup</span>
           </div>
  
          </div>
