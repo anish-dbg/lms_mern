@@ -1,7 +1,6 @@
 
 
 //find current user
-
 import uploadOnCloudinary from "../config/cloudinary.js";
 import User from "../model/userModel.js"
 
