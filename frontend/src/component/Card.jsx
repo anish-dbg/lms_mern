@@ -3,7 +3,6 @@ import { FaStar } from "react-icons/fa6";
 import { useNavigate } from 'react-router-dom';
 
 function Card({ thumbnail, title, category, price, id, reviews }) {
-  
   const calculateAvgReview = (reviews) =>{
     if(!reviews || reviews.length === 0){
       return 0;
@@ -11,9 +10,7 @@ function Card({ thumbnail, title, category, price, id, reviews }) {
     const total = reviews.reduce((sum, review) => sum + review.rating, 0);
     return (total / reviews.length).toFixed(1);
   }
-
   const avgRating = calculateAvgReview(reviews);
-
   const navigate = useNavigate();
   return (
     <div className='max-w-md w-full bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border border-gray-300' onClick={() => navigate(`/viewcourse/${id}`)}>
@@ -34,5 +31,4 @@ function Card({ thumbnail, title, category, price, id, reviews }) {
     </div>
   )
 }
-
 export default Card
